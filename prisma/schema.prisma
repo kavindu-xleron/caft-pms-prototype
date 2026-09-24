@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Pilot {
+  id           String        @id @default(cuid())
+  fullName     String
+  employeeId   String        @unique
+  email        String?
+  phone        String?
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  certificates Certificate[]
+
+  @@index([fullName])
+  @@map("pilots")
+}
+
+model Certificate {
+  id                  String     @id @default(cuid())
+  certificateNo       String     @unique
+  publicToken         String     @unique
+  pilotId             String
+  pilot               Pilot      @relation(fields: [pilotId], references: [id], onDelete: Restrict)
+  issueDate           DateTime   @db.Date
+  validUntil          DateTime   @db.Date
+  flyingHours         Decimal    @db.Decimal(7, 1)
+  authorizedModels    String[]
+  competencies        String[]
+  result              Result     @default(COMPETENT)
+  trainingManager     String
+  authorizedSignatory String
+  status              CertStatus @default(ACTIVE)
+  revokedAt           DateTime?
+  revokedReason       String?
+  issuedBy            String // Clerk userId
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@index([pilotId])
+  @@index([validUntil])
+  @@map("certificates")
+}
+
+model CertificateSequence {
+  year   Int @id
+  lastNo Int @default(0)
+
+  @@map("certificate_sequences")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String // pilot.created, certificate.issued, certificate.revoked...
+  entityType String
+  entityId   String
+  diff       Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
+}
+
+enum Result {
+  COMPETENT
+  NOT_YET_COMPETENT
+}
+
+enum CertStatus {
+  ACTIVE
+  REVOKED
+}
