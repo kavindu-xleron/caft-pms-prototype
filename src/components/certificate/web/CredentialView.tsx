@@ -19,11 +19,14 @@ import { RESULT_LABELS } from "@/lib/validation/certificate"
 export function CredentialView({
   data,
   nameAs: NameTag = "h1",
+  qrSrc,
   className,
 }: {
   data: CredentialData
   /** The pilot's name is the page's h1 on the public page. */
   nameAs?: "h1" | "h2"
+  /** Adds a "Scan to verify" QR code to the footer. */
+  qrSrc?: string
   className?: string
 }) {
   const competent = data.result === "COMPETENT"
@@ -90,7 +93,7 @@ export function CredentialView({
           {facts.map(([label, value]) => (
             <div key={label} className="rounded-lg bg-muted/60 px-3 py-2">
               <dt className="text-xs text-muted-foreground">{label}</dt>
-              <dd className="mt-0.5 font-medium break-words tabular-nums">
+              <dd className="mt-0.5 font-medium break-words tabular-nums lg:text-sm lg:whitespace-nowrap">
                 {value}
               </dd>
             </div>
@@ -135,8 +138,21 @@ export function CredentialView({
         </dl>
       </Section>
 
-      <footer className="border-t px-4 py-4 text-xs text-muted-foreground sm:px-8">
-        {CERT_DISCLAIMER}
+      <footer className="flex items-center gap-4 border-t px-4 py-4 sm:px-8">
+        {qrSrc && (
+          <div className="flex shrink-0 flex-col items-center gap-1">
+            {/* eslint-disable-next-line @next/next/no-img-element -- dynamic PNG from our own route */}
+            <img
+              src={qrSrc}
+              alt="QR code linking to this certificate page"
+              width={96}
+              height={96}
+              className="size-24 rounded-md border bg-white p-1"
+            />
+            <span className="text-xs font-medium">Scan to verify</span>
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">{CERT_DISCLAIMER}</p>
       </footer>
     </article>
   )

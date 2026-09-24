@@ -3,7 +3,7 @@ import QRCode from "qrcode"
 import { tokenPrefix } from "@/lib/public-token"
 import { childLogger } from "@/server/logger"
 import { publicCertificateUrl } from "@/server/public-url"
-import { findCertificateNoByToken } from "@/server/queries/public-certificate"
+import { getPublicCertificate } from "@/server/queries/public-certificate"
 
 export const runtime = "nodejs"
 
@@ -18,7 +18,8 @@ export async function GET(
   })
 
   try {
-    const certificateNo = await findCertificateNoByToken(token)
+    const certificateNo = (await getPublicCertificate(token))?.credential
+      .certificateNo
     if (!certificateNo) {
       log.warn({ event: "qr.not_found" })
       return new Response("Not found", { status: 404 })

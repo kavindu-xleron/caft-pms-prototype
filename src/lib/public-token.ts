@@ -8,3 +8,4 @@ export const tokenPrefix = (token: string) => token.slice(0, 6)
 
 export const publicCertificatePath = (token: string) => `/c/${token}`
 export const certificateQrPath = (token: string) => `/api/c/${token}/qr`
+export const certificatePdfPath = (token: string) => `/api/c/${token}/pdf`
