@@ -34,10 +34,20 @@ export async function generateMetadata(
   const robots = { index: false, follow: false }
   if (!cert) return { title: "Certificate not found", robots }
   const { credential: c } = cert
+  const title = `${c.pilotName} — Certified Agricultural Drone Pilot`
+  const description = `CAFT certificate ${c.certificateNo} · ${STATE_TEXT[cert.state]}`
   return {
-    title: `${c.pilotName} — Certified Agricultural Drone Pilot`,
-    description: `CAFT certificate ${c.certificateNo} · ${STATE_TEXT[cert.state]}`,
+    title,
+    description,
     robots,
+    // Link previews (WhatsApp, Slack…); the image is opengraph-image.tsx.
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      siteName: "CAFT — Ceylon Agro Food Tech",
+    },
+    twitter: { card: "summary_large_image", title, description },
   }
 }
 

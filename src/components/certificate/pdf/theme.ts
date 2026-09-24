@@ -15,6 +15,10 @@ export const PDF_COLORS = {
   border: "#d4d4d4",
   watermark: "#b91c1c",
   paper: "#ffffff",
+  // Status colours for images (OG cards), matching --warning / --destructive.
+  warning: "#f2a93b",
+  warningText: "#4a2c05",
+  danger: "#dc2626",
 } as const
 
 export const PDF_FONT_FAMILY = "Geist"

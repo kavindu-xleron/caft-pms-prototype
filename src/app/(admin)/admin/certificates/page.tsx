@@ -1,5 +1,6 @@
 import {
   ChevronRight,
+  QrCode,
   FileBadge,
   FilePlus,
   Search,
@@ -251,14 +252,24 @@ function CertificateTable({ rows }: { rows: CertificateListItem[] }) {
               <TableCell>
                 <CertificateStatusBadge state={c.state} />
               </TableCell>
-              <TableCell className="pr-4 text-right">
-                <CopyButton
-                  value={c.publicUrl}
-                  label="Copy link"
-                  variant="ghost"
-                  size="sm"
-                  aria-label={`Copy public link for ${c.certificateNo}`}
-                />
+              <TableCell className="pr-4">
+                <div className="flex justify-end gap-1">
+                  <CopyButton
+                    value={c.publicUrl}
+                    label="Copy link"
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Copy public link for ${c.certificateNo}`}
+                  />
+                  <a
+                    href={`${c.qrPath}?download=1`}
+                    download
+                    className={buttonVariants({ variant: "ghost", size: "sm" })}
+                    aria-label={`Download QR code for ${c.certificateNo}`}
+                  >
+                    <QrCode aria-hidden /> QR
+                  </a>
+                </div>
               </TableCell>
             </TableRow>
           ))}

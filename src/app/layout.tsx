@@ -6,6 +6,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { env } from "@/lib/env"
 import { SIGN_IN_PATH } from "@/lib/routes"
 import { cn } from "@/lib/utils"
 
@@ -17,12 +18,16 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  // Makes OG image and canonical URLs absolute in link previews.
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  applicationName: "CAFT Drone Pilot Certificates",
   title: {
     default: "CAFT Drone Pilot Certificates",
     template: "%s | CAFT",
   },
   description:
     "Verify CAFT — Ceylon Agro Food Tech agricultural drone pilot certificates.",
+  openGraph: { siteName: "CAFT — Ceylon Agro Food Tech", locale: "en_LK" },
 }
 
 export default function RootLayout({
