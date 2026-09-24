@@ -1,11 +1,14 @@
 import "server-only"
 import { unstable_rethrow } from "next/navigation"
 import { z } from "zod"
-import { Prisma } from "@/generated/prisma/client"
 import type { ActionResult } from "@/lib/action-result"
 import { requireAdmin } from "@/server/auth"
 import { AppError } from "@/server/errors"
 import { childLogger, type Logger } from "@/server/logger"
+import {
+  isUniqueViolation,
+  uniqueViolationFields,
+} from "@/server/prisma-errors"
 import { getRequestId } from "@/server/request-id"
 
 export type AdminActionContext = { actorId: string; log: Logger }
@@ -55,13 +58,18 @@ export function adminAction<S extends z.ZodType, R>(
       unstable_rethrow(err)
       if (err instanceof AppError) {
         log.warn({ event: `${name}.failed`, code: err.code, meta: err.meta })
-        return { ok: false, code: err.code, message: err.message }
+        return {
+          ok: false,
+          code: err.code,
+          message: err.message,
+          ...(err.fieldErrors && { fieldErrors: err.fieldErrors }),
+        }
       }
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2002"
-      ) {
-        log.warn({ event: `${name}.conflict`, target: err.meta?.target })
+      if (isUniqueViolation(err)) {
+        log.warn({
+          event: `${name}.conflict`,
+          fields: uniqueViolationFields(err),
+        })
         return {
           ok: false,
           code: "CONFLICT",

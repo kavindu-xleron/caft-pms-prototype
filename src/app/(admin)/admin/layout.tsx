@@ -1,5 +1,9 @@
 import { UserButton } from "@clerk/nextjs"
 import type { Metadata } from "next"
+import Link from "next/link"
+import { AdminNav } from "@/components/admin/AdminNav"
+import { MobileNav } from "@/components/admin/MobileNav"
+import { ADMIN_HOME_PATH } from "@/lib/routes"
 import { requireAdminPage } from "@/server/auth"
 
 export const metadata: Metadata = {
@@ -7,7 +11,6 @@ export const metadata: Metadata = {
   robots: { index: false },
 }
 
-// Minimal shell for the admin gate; the full sidebar arrives in Phase 3.
 export default async function AdminLayout({
   children,
 }: {
@@ -16,12 +19,33 @@ export default async function AdminLayout({
   await requireAdminPage()
 
   return (
-    <div className="flex min-h-svh flex-col border-t-4 border-caft-green">
-      <header className="flex h-14 items-center justify-between border-b px-4">
-        <span className="font-semibold text-caft-navy">CAFT Admin</span>
-        <UserButton />
-      </header>
-      <main className="flex-1 p-4 md:p-6">{children}</main>
+    <div className="min-h-svh border-t-4 border-caft-green md:grid md:grid-cols-[15rem_1fr]">
+      <aside className="sticky top-0 hidden h-[calc(100svh-4px)] flex-col gap-6 border-r bg-sidebar p-4 md:flex">
+        <Link
+          href={ADMIN_HOME_PATH}
+          className="rounded-md px-3 py-2 font-semibold text-caft-navy outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:text-foreground"
+        >
+          CAFT Admin
+        </Link>
+        <AdminNav />
+      </aside>
+
+      <div className="flex min-w-0 flex-col">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b bg-background/95 px-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 md:px-6">
+          <div className="md:hidden">
+            <MobileNav />
+          </div>
+          <span className="font-semibold text-caft-navy md:hidden dark:text-foreground">
+            CAFT Admin
+          </span>
+          <div className="ml-auto flex items-center pr-2">
+            <UserButton />
+          </div>
+        </header>
+        <main className="flex-1 p-4 md:p-6 lg:p-8">
+          <div className="mx-auto w-full max-w-6xl">{children}</div>
+        </main>
+      </div>
     </div>
   )
 }
