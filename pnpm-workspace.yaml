@@ -4,3 +4,7 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
   msw: false
+  prisma: true
+  "@prisma/engines": true
+  "@prisma/client": true
+  esbuild: true
