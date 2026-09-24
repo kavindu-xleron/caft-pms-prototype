@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest"
-import { nameFontSize, twoColumns } from "@/components/certificate/layout"
+import {
+  breakLongWord,
+  infoFontSize,
+  nameFontSize,
+  twoColumns,
+} from "@/components/certificate/layout"
 
 describe("nameFontSize", () => {
   it("shrinks as names get longer, never below 18px", () => {
@@ -21,5 +26,26 @@ describe("twoColumns", () => {
       [4, 5],
     ])
     expect(twoColumns([])).toEqual([[], []])
+  })
+})
+
+describe("infoFontSize", () => {
+  it("keeps normal values full size and shrinks long ones", () => {
+    expect(infoFontSize("ADP-2026-001")).toBe(12.5)
+    expect(infoFontSize("EMP-ABCDEFGHIJKLMNOP")).toBeLessThan(12.5)
+  })
+})
+
+describe("breakLongWord", () => {
+  it("never splits normal words", () => {
+    expect(breakLongWord("Wickramasinghe")).toEqual(["Wickramasinghe"])
+  })
+
+  it("chunks pathological runs", () => {
+    expect(breakLongWord("M".repeat(40))).toEqual([
+      "M".repeat(18),
+      "M".repeat(18),
+      "M".repeat(4),
+    ])
   })
 })
