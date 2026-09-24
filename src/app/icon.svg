@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- CAFT green (#1d8139 = --caft-green-print) -->
-  <rect width="64" height="64" rx="14" fill="#1d8139"/>
-  <path d="M44.5 22.5A15 15 0 1 0 44.5 41.5" fill="none" stroke="#ffffff" stroke-width="7.5" stroke-linecap="round"/>
-</svg>

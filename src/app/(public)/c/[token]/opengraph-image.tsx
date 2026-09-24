@@ -10,6 +10,9 @@ export const contentType = "image/png"
 
 // Local fonts, read once (bundled via outputFileTracingIncludes).
 const fontDir = join(process.cwd(), "src/assets/fonts")
+const logo = readFile(join(process.cwd(), "src/assets/caft-logo.png")).then(
+  (png) => `data:image/png;base64,${png.toString("base64")}`
+)
 const fonts = Promise.all([
   readFile(join(fontDir, "Geist-Medium.ttf")),
   readFile(join(fontDir, "Geist-Bold.ttf")),
@@ -27,7 +30,7 @@ export default async function Image({
 }: {
   params: Promise<{ token: string }>
 }) {
-  const [medium, bold, black] = await fonts
+  const [[medium, bold, black], logoSrc] = await Promise.all([fonts, logo])
   const cert = await getPublicCertificate((await params).token)
   const name = cert?.credential.pilotName ?? "CAFT Certificate"
   const status = cert ? STATUS[cert.state] : null
@@ -47,28 +50,14 @@ export default async function Image({
         color: C.text,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-        <span
-          style={{
-            fontSize: 64,
-            fontWeight: 900,
-            color: C.green,
-            letterSpacing: -2,
-          }}
-        >
-          CAFT
-        </span>
-        <span
-          style={{
-            fontSize: 22,
-            fontWeight: 500,
-            color: C.navy,
-            letterSpacing: 5,
-          }}
-        >
-          CEYLON AGRO FOOD TECH
-        </span>
-      </div>
+      <img
+        src={logoSrc}
+        alt=""
+        // next/og needs explicit pixel sizes; the logo is 904×608.
+        width={223}
+        height={150}
+        style={{ alignSelf: "flex-start" }}
+      />
 
       <div
         style={{ display: "flex", flexDirection: "column", marginTop: "auto" }}

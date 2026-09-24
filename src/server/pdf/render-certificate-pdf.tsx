@@ -12,6 +12,7 @@ import { PDF_FONT_FAMILY } from "@/components/certificate/pdf/theme"
 // Local TTFs only: PDF rendering never depends on the network. The files are
 // bundled for this route via outputFileTracingIncludes in next.config.ts.
 const FONT_DIR = path.join(process.cwd(), "src/assets/fonts")
+const LOGO_PATH = path.join(process.cwd(), "src/assets/caft-logo.png")
 
 let fontsRegistered = false
 function registerFonts() {
@@ -36,7 +37,7 @@ function registerFonts() {
 export async function renderCertificatePdf({
   publicUrl,
   ...props
-}: Omit<CertificatePdfProps, "qrDataUrl"> & {
+}: Omit<CertificatePdfProps, "qrDataUrl" | "logoSrc"> & {
   publicUrl: string
 }): Promise<Buffer> {
   registerFonts()
@@ -45,5 +46,7 @@ export async function renderCertificatePdf({
     margin: 1,
     width: 360,
   })
-  return renderToBuffer(<CertificatePdf {...props} qrDataUrl={qrDataUrl} />)
+  return renderToBuffer(
+    <CertificatePdf {...props} qrDataUrl={qrDataUrl} logoSrc={LOGO_PATH} />
+  )
 }
