@@ -1,16 +1,8 @@
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-} from "lucide-react"
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from "lucide-react"
 import Link from "next/link"
 import { pilotListHref } from "@/components/admin/pilot-list-href"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { formatCount } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import type { PilotListQuery, PilotSort } from "@/lib/validation/pilot"
 
@@ -82,63 +74,5 @@ export function SortLink({
       {children}
       <Icon className={cn("size-3.5", !active && "opacity-50")} aria-hidden />
     </Link>
-  )
-}
-
-export function Pagination({
-  query,
-  page,
-  pageCount,
-  total,
-}: {
-  query: PilotListQuery
-  page: number
-  pageCount: number
-  total: number
-}) {
-  const linkClass = buttonVariants({ variant: "outline", size: "lg" })
-  const disabledClass = cn(linkClass, "pointer-events-none opacity-50")
-  return (
-    <nav
-      aria-label="Pagination"
-      className="mt-4 flex items-center justify-between gap-2 text-sm"
-    >
-      <p className="text-muted-foreground">
-        {formatCount(total)} {total === 1 ? "pilot" : "pilots"} · Page {page} of{" "}
-        {pageCount}
-      </p>
-      <div className="flex gap-2">
-        {page > 1 ? (
-          <Link
-            href={pilotListHref(query, { page: page - 1 })}
-            className={linkClass}
-            rel="prev"
-          >
-            <ChevronLeft />{" "}
-            <span className="sr-only sm:not-sr-only">Previous</span>
-          </Link>
-        ) : (
-          <span className={disabledClass} aria-disabled="true">
-            <ChevronLeft />{" "}
-            <span className="sr-only sm:not-sr-only">Previous</span>
-          </span>
-        )}
-        {page < pageCount ? (
-          <Link
-            href={pilotListHref(query, { page: page + 1 })}
-            className={linkClass}
-            rel="next"
-          >
-            <span className="sr-only sm:not-sr-only">Next</span>{" "}
-            <ChevronRight />
-          </Link>
-        ) : (
-          <span className={disabledClass} aria-disabled="true">
-            <span className="sr-only sm:not-sr-only">Next</span>{" "}
-            <ChevronRight />
-          </span>
-        )}
-      </div>
-    </nav>
   )
 }

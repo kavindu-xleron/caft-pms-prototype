@@ -23,6 +23,3 @@ export type Logger = typeof logger
 
 export const childLogger = (ctx: Record<string, unknown>): Logger =>
   logger.child(ctx)
-
-/** Public tokens are secrets: only ever log a short prefix. */
-export const tokenPrefix = (token: string) => token.slice(0, 6)

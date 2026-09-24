@@ -6,13 +6,8 @@ import { CertificateStatusBadge } from "@/components/admin/CertificateStatusBadg
 import { DeletePilotButton } from "@/components/admin/DeletePilotButton"
 import { EmptyState } from "@/components/admin/EmptyState"
 import { PageHeader } from "@/components/admin/PageHeader"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 import { formatDate } from "@/lib/format"
 import { requireAdminPage } from "@/server/auth"
 import { type PilotDetail, getPilotDetail } from "@/server/queries/pilots"
@@ -52,7 +47,7 @@ export default async function PilotProfilePage(
         description={<span className="font-mono">{pilot.employeeId}</span>}
         actions={
           <>
-            <IssueCertificateButton />
+            <IssueCertificateButton pilotId={pilot.id} />
             <Link
               href={`/admin/pilots/${pilot.id}/edit`}
               className={buttonVariants({ variant: "outline", size: "lg" })}
@@ -86,24 +81,27 @@ export default async function PilotProfilePage(
           ) : (
             <ul className="divide-y rounded-xl border">
               {pilot.certificates.map((c) => (
-                <li
-                  key={c.id}
-                  className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="min-w-0 space-y-1">
-                    <p className="font-mono font-medium">{c.certificateNo}</p>
-                    <p className="text-sm text-muted-foreground">
-                      Issued {formatDate(c.issueDate)} · Valid until{" "}
-                      {formatDate(c.validUntil)} · {c.flyingHours} flying hours
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {c.authorizedModels.join(", ")}
-                    </p>
-                  </div>
-                  <CertificateStatusBadge
-                    state={c.state}
-                    className="self-start sm:self-center"
-                  />
+                <li key={c.id}>
+                  <Link
+                    href={`/admin/certificates/${c.id}`}
+                    className="flex flex-col gap-2 p-4 outline-none hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="min-w-0 space-y-1">
+                      <p className="font-mono font-medium">{c.certificateNo}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Issued {formatDate(c.issueDate)} · Valid until{" "}
+                        {formatDate(c.validUntil)} · {c.flyingHours} flying
+                        hours
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {c.authorizedModels.join(", ")}
+                      </p>
+                    </div>
+                    <CertificateStatusBadge
+                      state={c.state}
+                      className="self-start sm:self-center"
+                    />
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -151,18 +149,13 @@ function PilotDetails({ pilot }: { pilot: PilotDetail }) {
   )
 }
 
-/** Wired up to the issue form in Phase 4. */
-function IssueCertificateButton() {
+function IssueCertificateButton({ pilotId }: { pilotId: string }) {
   return (
-    <Tooltip>
-      <TooltipTrigger render={<span tabIndex={0} />}>
-        <Button size="lg" disabled>
-          <FilePlus /> Issue certificate
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        Available once certificate issuing is built (Phase 4)
-      </TooltipContent>
-    </Tooltip>
+    <Link
+      href={`/admin/certificates/new?pilotId=${pilotId}`}
+      className={buttonVariants({ size: "lg" })}
+    >
+      <FilePlus aria-hidden /> Issue certificate
+    </Link>
   )
 }

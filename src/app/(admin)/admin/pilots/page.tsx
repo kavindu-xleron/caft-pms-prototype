@@ -12,11 +12,8 @@ import { CertificateStatusBadge } from "@/components/admin/CertificateStatusBadg
 import { EmptyState } from "@/components/admin/EmptyState"
 import { PageHeader } from "@/components/admin/PageHeader"
 import { pilotListHref } from "@/components/admin/pilot-list-href"
-import {
-  Pagination,
-  PilotSearch,
-  SortLink,
-} from "@/components/admin/PilotListControls"
+import { Pagination } from "@/components/admin/Pagination"
+import { PilotSearch, SortLink } from "@/components/admin/PilotListControls"
 import { buttonVariants } from "@/components/ui/button"
 import {
   Table,
@@ -92,10 +89,11 @@ export default async function PilotsPage(props: PageProps<"/admin/pilots">) {
               <PilotCards rows={rows} />
               <PilotTable rows={rows} query={query} />
               <Pagination
-                query={query}
                 page={page}
                 pageCount={pageCount}
                 total={total}
+                noun={["pilot", "pilots"]}
+                hrefFor={(p) => pilotListHref(query, { page: p })}
               />
             </>
           )}
