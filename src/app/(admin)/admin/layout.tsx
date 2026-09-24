@@ -2,6 +2,7 @@ import { UserButton } from "@clerk/nextjs"
 import type { Metadata } from "next"
 import Link from "next/link"
 import { AdminNav } from "@/components/admin/AdminNav"
+import { CaftLogo } from "@/components/brand/CaftLogo"
 import { MobileNav } from "@/components/admin/MobileNav"
 import { ADMIN_HOME_PATH } from "@/lib/routes"
 import { requireAdminPage } from "@/server/auth"
@@ -23,9 +24,10 @@ export default async function AdminLayout({
       <aside className="sticky top-0 hidden h-[calc(100svh-4px)] flex-col gap-6 border-r bg-sidebar p-4 md:flex">
         <Link
           href={ADMIN_HOME_PATH}
-          className="rounded-md px-3 py-2 font-semibold text-caft-navy outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:text-foreground"
+          className="flex items-center gap-2 rounded-md px-3 py-2 font-semibold text-caft-navy outline-none focus-visible:ring-3 focus-visible:ring-ring/50 dark:text-foreground"
         >
-          CAFT Admin
+          <CaftLogo variant="mark" className="h-9" />
+          <span>Admin</span>
         </Link>
         <AdminNav />
       </aside>
@@ -35,8 +37,9 @@ export default async function AdminLayout({
           <div className="md:hidden">
             <MobileNav />
           </div>
-          <span className="font-semibold text-caft-navy md:hidden dark:text-foreground">
-            CAFT Admin
+          <span className="flex items-center gap-2 font-semibold text-caft-navy md:hidden dark:text-foreground">
+            <CaftLogo variant="mark" className="h-8" />
+            <span>Admin</span>
           </span>
           <div className="ml-auto flex items-center pr-2">
             <UserButton />

@@ -1,4 +1,5 @@
 import { CircleAlert, CircleCheck } from "lucide-react"
+import { CaftLogo } from "@/components/brand/CaftLogo"
 import {
   CERT_BODY,
   CERT_DISCLAIMER,
@@ -53,7 +54,7 @@ export function CredentialView({
       <div className="h-1.5 bg-caft-green" aria-hidden />
 
       <header className="flex flex-col items-center gap-1 px-4 pt-6 pb-6 text-center sm:px-8 sm:pt-8">
-        <CaftWordmark />
+        <CaftLogo className="h-20 sm:h-24" />
         <p className="mt-3 text-lg font-semibold text-caft-green sm:text-xl">
           {CERT_TITLE}
         </p>
@@ -181,19 +182,5 @@ function Signatory({ role, name }: { role: string; name: string }) {
       <dt className="text-xs text-muted-foreground">{role}</dt>
       <dd className="font-medium">{name}</dd>
     </div>
-  )
-}
-
-/** Text wordmark until the CAFT logo asset is added. */
-function CaftWordmark() {
-  return (
-    <p className="flex flex-col items-center leading-none">
-      <span className="text-3xl font-black tracking-tight text-caft-green">
-        CAFT
-      </span>
-      <span className="mt-1 text-[0.65rem] font-medium tracking-[0.2em] text-caft-navy uppercase dark:text-muted-foreground">
-        Ceylon Agro Food Tech
-      </span>
-    </p>
   )
 }

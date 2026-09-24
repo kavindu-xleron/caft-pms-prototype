@@ -3,6 +3,7 @@
 import { Menu } from "lucide-react"
 import { useState } from "react"
 import { AdminNav } from "@/components/admin/AdminNav"
+import { CaftLogo } from "@/components/brand/CaftLogo"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -26,8 +27,9 @@ export function MobileNav() {
       </SheetTrigger>
       <SheetContent side="left" className="w-72 bg-sidebar p-4">
         <SheetHeader className="p-0 pb-4">
-          <SheetTitle className="text-caft-navy dark:text-foreground">
-            CAFT Admin
+          <SheetTitle className="flex items-center gap-2 text-caft-navy dark:text-foreground">
+            <CaftLogo variant="mark" className="h-9" />
+            <span>Admin</span>
           </SheetTitle>
         </SheetHeader>
         <AdminNav onNavigate={() => setOpen(false)} />

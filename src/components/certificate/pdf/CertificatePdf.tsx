@@ -32,6 +32,8 @@ import { RESULT_LABELS } from "@/lib/validation/certificate"
 export type CertificatePdfProps = {
   data: CredentialData & { certificateNo: string }
   qrDataUrl: string
+  /** Absolute path (or data URL) of the CAFT logo PNG. */
+  logoSrc: string
   watermark?: "EXPIRED" | "REVOKED"
 }
 
@@ -42,6 +44,7 @@ export type CertificatePdfProps = {
 export function CertificatePdf({
   data,
   qrDataUrl,
+  logoSrc,
   watermark,
 }: CertificatePdfProps) {
   const [left, right] = twoColumns(data.competencies)
@@ -65,8 +68,8 @@ export function CertificatePdf({
       <Page size="A4" orientation="landscape" style={s.page}>
         <View style={s.outerBorder}>
           <View style={s.innerBorder}>
-            <Text style={s.wordmark}>CAFT</Text>
-            <Text style={s.wordmarkSub}>CEYLON AGRO FOOD TECH</Text>
+            {/* eslint-disable-next-line jsx-a11y/alt-text -- react-pdf Image has no alt */}
+            <Image src={logoSrc} style={s.logo} />
 
             <Text style={s.title}>{CERT_TITLE.toUpperCase()}</Text>
             <Text style={s.subtitle}>{CERT_SUBTITLE.toUpperCase()}</Text>
@@ -202,25 +205,13 @@ const s = StyleSheet.create({
     alignItems: "center",
     textAlign: "center",
   },
-  wordmark: {
-    fontSize: pt(30),
-    fontWeight: 900,
-    color: C.green,
-    letterSpacing: -0.5,
-  },
-  wordmarkSub: {
-    fontSize: pt(8),
-    fontWeight: 500,
-    color: C.navy,
-    letterSpacing: pt(2),
-    marginTop: 1,
-  },
+  logo: { height: pt(68), objectFit: "contain" },
   title: {
     fontSize: pt(28),
     fontWeight: 700,
     color: C.green,
     letterSpacing: 0.6,
-    marginTop: pt(10),
+    marginTop: pt(6),
   },
   subtitle: {
     fontSize: pt(16),

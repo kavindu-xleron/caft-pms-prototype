@@ -1,3 +1,4 @@
+import { CaftLogo } from "@/components/brand/CaftLogo"
 import {
   CERT_BODY,
   CERT_DISCLAIMER,
@@ -45,16 +46,9 @@ export function CertificateSheet({
     >
       <div className="h-full border-[3px] border-caft-green-print p-[5px]">
         <div className="flex h-full flex-col items-center border border-caft-navy-print px-[48px] pt-[22px] pb-[14px] text-center">
-          <p className="flex flex-col items-center leading-none">
-            <span className="text-[30px] font-black tracking-tight text-caft-green-print">
-              CAFT
-            </span>
-            <span className="mt-[3px] text-[8px] font-medium tracking-[0.25em] text-caft-navy-print uppercase">
-              Ceylon Agro Food Tech
-            </span>
-          </p>
+          <CaftLogo plate={false} className="h-[68px]" />
 
-          <p className="mt-[10px] text-[28px] leading-tight font-bold tracking-wide text-caft-green-print uppercase">
+          <p className="mt-[6px] text-[28px] leading-tight font-bold tracking-wide text-caft-green-print uppercase">
             {CERT_TITLE}
           </p>
           <p className="text-[16px] font-semibold tracking-[0.2em] uppercase">
