@@ -57,7 +57,12 @@ export default async function PilotProfilePage(
             <DeletePilotButton
               pilotId={pilot.id}
               pilotName={pilot.fullName}
-              certificateCount={pilot.certificates.length}
+              activeCertificateCount={
+                pilot.certificates.filter((c) => c.state !== "REVOKED").length
+              }
+              revokedCertificateNos={pilot.certificates
+                .filter((c) => c.state === "REVOKED")
+                .map((c) => c.certificateNo)}
             />
           </>
         }

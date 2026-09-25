@@ -20,16 +20,22 @@ import { deletePilotAction } from "@/server/actions/pilot-actions"
 export function DeletePilotButton({
   pilotId,
   pilotName,
-  certificateCount,
+  activeCertificateCount,
+  revokedCertificateNos,
 }: {
   pilotId: string
   pilotName: string
-  certificateCount: number
+  /** Certificates that are not revoked (valid, expiring or expired). */
+  activeCertificateCount: number
+  revokedCertificateNos: string[]
 }) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
-  const blocked = certificateCount > 0
+  const blocked = activeCertificateCount > 0
+  const revoked = revokedCertificateNos.length
+  const plural = (n: number, word: string) =>
+    `${n} ${word}${n === 1 ? "" : "s"}`
 
   function onDelete() {
     startTransition(async () => {
@@ -39,7 +45,12 @@ export function DeletePilotButton({
         setOpen(false)
         return
       }
-      toast.success(`${pilotName} deleted`)
+      const removed = result.data.deletedCertificates.length
+      toast.success(
+        removed
+          ? `${pilotName} and ${plural(removed, "revoked certificate")} deleted`
+          : `${pilotName} deleted`
+      )
       router.push("/admin/pilots")
     })
   }
@@ -56,8 +67,10 @@ export function DeletePilotButton({
           </DialogTitle>
           <DialogDescription>
             {blocked
-              ? `${pilotName} has ${certificateCount} ${certificateCount === 1 ? "certificate" : "certificates"}. Pilots with certificates are kept for the record; revoke a certificate instead if it should no longer be valid.`
-              : "This permanently removes the pilot. This cannot be undone."}
+              ? `${pilotName} has ${plural(activeCertificateCount, "certificate")} that ${activeCertificateCount === 1 ? "is" : "are"} not revoked. Revoke ${activeCertificateCount === 1 ? "it" : "them"} first, then the pilot can be deleted.`
+              : revoked
+                ? `This also permanently deletes ${pilotName}’s ${plural(revoked, "revoked certificate")} (${revokedCertificateNos.join(", ")}). Their links and QR codes will show “not found” instead of “Revoked”. This cannot be undone.`
+                : "This permanently removes the pilot. This cannot be undone."}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -74,7 +87,9 @@ export function DeletePilotButton({
               disabled={pending}
             >
               {pending && <LoaderCircle className="animate-spin" aria-hidden />}
-              Delete pilot
+              {revoked
+                ? `Delete pilot and ${plural(revoked, "certificate")}`
+                : "Delete pilot"}
             </Button>
           )}
         </DialogFooter>

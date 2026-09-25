@@ -110,10 +110,17 @@ export const pilotService = {
     }
   },
 
+  /**
+   * Deletes a pilot whose certificates are all revoked, together with those
+   * revoked certificates. Any certificate that is not revoked (valid, expiring
+   * or expired) blocks the delete. Deleted certificates' links and QR codes
+   * stop resolving, so the audit row keeps their numbers.
+   */
   async delete(id: string, { actorId }: Ctx) {
-    const blocked = conflict(
-      "This pilot has certificates and cannot be deleted. Revoke the certificates instead."
-    )
+    const hasActive = (count: number) =>
+      conflict(
+        `This pilot has ${count} certificate${count === 1 ? "" : "s"} that ${count === 1 ? "is" : "are"} not revoked. Revoke ${count === 1 ? "it" : "them"} first, then delete the pilot.`
+      )
     try {
       return await db.$transaction(async (tx) => {
         const pilot = await tx.pilot.findUnique({
@@ -121,12 +128,22 @@ export const pilotService = {
           select: {
             employeeId: true,
             fullName: true,
-            _count: { select: { certificates: true } },
+            certificates: { select: { certificateNo: true, status: true } },
           },
         })
         if (!pilot) throw notFoundError("Pilot")
-        if (pilot._count.certificates > 0) throw blocked
 
+        const active = pilot.certificates.filter((c) => c.status !== "REVOKED")
+        if (active.length > 0) throw hasActive(active.length)
+
+        const deletedCertificates = pilot.certificates.map(
+          (c) => c.certificateNo
+        )
+        // Only revoked rows: a certificate issued concurrently survives and
+        // trips the RESTRICT foreign key on the pilot delete below.
+        await tx.certificate.deleteMany({
+          where: { pilotId: id, status: "REVOKED" },
+        })
         await tx.pilot.delete({ where: { id } })
         await tx.auditLog.create({
           data: {
@@ -134,15 +151,18 @@ export const pilotService = {
             action: "pilot.deleted",
             entityType: "Pilot",
             entityId: id,
-            diff: { employeeId: pilot.employeeId, fullName: pilot.fullName },
+            diff: {
+              employeeId: pilot.employeeId,
+              fullName: pilot.fullName,
+              deletedCertificates,
+            },
           },
         })
-        return { id }
+        return { id, deletedCertificates }
       })
     } catch (err) {
-      // A certificate issued between the check and the delete trips the
-      // RESTRICT foreign key instead.
-      throw isForeignKeyViolation(err) ? blocked : err
+      // A certificate issued between the check and the delete.
+      throw isForeignKeyViolation(err) ? hasActive(1) : err
     }
   },
 }
