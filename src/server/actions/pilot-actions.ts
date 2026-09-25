@@ -36,9 +36,15 @@ export const deletePilotAction = adminAction(
   "pilot.delete",
   pilotIdSchema,
   async ({ id }, { actorId, log }) => {
-    await pilotService.delete(id, { actorId })
-    log.info({ event: "pilot.deleted", pilotId: id })
+    const { deletedCertificates } = await pilotService.delete(id, { actorId })
+    log.info({
+      event: "pilot.deleted",
+      pilotId: id,
+      deletedCertificates: deletedCertificates.length,
+    })
+    revalidatePath("/admin")
     revalidatePath("/admin/pilots")
-    return { id }
+    revalidatePath("/admin/certificates")
+    return { id, deletedCertificates }
   }
 )
